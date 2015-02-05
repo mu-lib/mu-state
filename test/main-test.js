@@ -55,26 +55,6 @@ define([ "../main" ], function (CS) {
         });
     },
 
-    "get using object": function () {
-      return this.cs
-        .get({
-          "key1": UNDEFINED,
-          "key1.key2": UNDEFINED,
-          "key3": "default"
-        })
-        .then(function (result) {
-          assert.equals(result["key1"], {
-            "key2": {
-              "key3": "value3"
-            }
-          });
-          assert.equals(result["key1.key2"], {
-            "key3": "value3"
-          });
-          assert.equals(result["key3"], "default");
-        });
-    },
-
     "get using array": function () {
       return this.cs
         .get(["key1", "key1.key2" ])

@@ -70,16 +70,6 @@ define([
         });
         break;
 
-      case TOSTRING_OBJECT:
-        result = when_keys.map(key, function (_value, _key) {
-          var __key = _key.split(".");
-
-          return _has.call(me, __key)
-            ? _get.call(me, __key)
-            : _value;
-        });
-        break;
-
       default:
         result = _get.call(me, key.split("."));
         break;
