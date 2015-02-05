@@ -1,0 +1,12 @@
+{
+  "description": "Micro Track",
+  "devDependencies": {
+    "grunt": "~0",
+    "grunt-contrib-requirejs": "~0",
+    "grunt-contrib-uglify": "~0",
+    "grunt-contrib-clean": "~0",
+    "grunt-buster": "~0.3",
+    "load-grunt-tasks": "~3",
+    "buster-amd": "~0.3"
+  }
+}

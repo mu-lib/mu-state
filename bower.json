@@ -1,0 +1,21 @@
+{
+  "name": "mu-state",
+  "main": "main.js",
+  "description": "Micro State",
+  "moduleType": [
+    "amd"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules"
+  ],
+  "dependencies": {
+    "when": "^3",
+    "poly": "^0"
+  },
+  "devDependencies": {
+    "requirejs": "^2.1"
+  }
+}
