@@ -11,6 +11,7 @@ define([
   var TOSTRING_FUNCTION = "[object Function]";
   var TOSTRING_ARRAY = "[object Array]";
   var TOSTRING_OBJECT = "[object Object]";
+  var SEPARATOR = ".";
   var LENGTH = "length";
 
   function _get(keys) {
@@ -32,7 +33,7 @@ define([
           ? node[key]
           : node[key] = {};
     }, me)[keys[last]] = OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION
-      ? value.call(me, keys.join("."))
+      ? value.call(me, keys.join(SEPARATOR))
       : value;
   }
 
@@ -66,12 +67,12 @@ define([
     switch (OBJECT_TOSTRING.call(key)) {
       case TOSTRING_ARRAY:
         result = key.map(function (_key) {
-          return _get.call(me, _key.split("."));
+          return _get.call(me, _key.split(SEPARATOR));
         });
         break;
 
       default:
-        result = _get.call(me, key.split("."));
+        result = _get.call(me, key.split(SEPARATOR));
         break;
     }
 
@@ -85,12 +86,12 @@ define([
     switch(OBJECT_TOSTRING.call(key)) {
       case TOSTRING_OBJECT:
         result = when_keys(key, function (_value, _key) {
-          return _put.call(me, _key.split("."), _value);
+          return _put.call(me, _key.split(SEPARATOR), _value);
         });
         break;
 
       default:
-        result = _put.call(me, key.split("."), value);
+        result = _put.call(me, key.split(SEPARATOR), value);
         break;
     }
 
@@ -98,7 +99,7 @@ define([
   };
 
   State.prototype.has = function (key) {
-    return _has.call(this, key.split("."));
+    return _has.call(this, key.split(SEPARATOR));
   };
 
   return State;
