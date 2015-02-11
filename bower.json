@@ -13,7 +13,9 @@
   ],
   "dependencies": {
     "when": "^3",
-    "poly": "^0"
+    "poly": "^0",
+    "mu-emitter": "*",
+    "mu-merge": "^0"
   },
   "devDependencies": {
     "requirejs": "^2.1"

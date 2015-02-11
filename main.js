@@ -1,9 +1,12 @@
 define([
+  "mu-emitter/main",
+  "./config",
+  "./executor",
   "when/when",
   "when/keys",
   "poly/array",
   "poly/object"
-], function (when, when_keys) {
+], function (Emitter, config, executor, when, when_keys) {
   var UNDEFINED;
   var EMPTY = {};
   var ARRAY_SLICE = Array.prototype.slice;
@@ -13,28 +16,50 @@ define([
   var TOSTRING_OBJECT = "[object Object]";
   var SEPARATOR = ".";
   var LENGTH = "length";
+  var GET = config.get;
+  var PUT = config.put;
+  var TYPE = config.type;
+  var EXECUTOR = config.executor;
 
-  function _get(keys) {
-    return keys.reduce(function (node, key) {
-      return node === UNDEFINED
-        ? node
-        : node[key];
-    }, this);
+  function _get(key, segments) {
+    var me = this;
+    var event = {};
+
+    event[TYPE] = GET;
+    event[EXECUTOR] = executor;
+
+    return me
+      .emit(event, key)
+      .then(function () {
+        return segments.reduce(function (node, segment) {
+          return node === UNDEFINED
+            ? node
+            : node[segment];
+        }, me);
+      });
   }
 
-  function _put(keys, value) {
+  function _put(key, segments, value) {
     var me = this;
-    var last = keys[LENGTH] - 1;
+    var event = {};
 
-    return keys.reduce(function (node, key, index) {
+    var last = segments[LENGTH] - 1;
+    var result = segments.reduce(function (node, segment, index) {
       return index === last
         ? node
-        : node.hasOwnProperty(key)
-          ? node[key]
-          : node[key] = {};
-    }, me)[keys[last]] = OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION
-      ? value.call(me, keys.join(SEPARATOR))
+        : node.hasOwnProperty(segment)
+          ? node[segment]
+          : node[segment] = {};
+    }, me)[segments[last]] = OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION
+      ? value.call(me, segments.join(SEPARATOR))
       : value;
+
+    event[TYPE] = PUT;
+    event[EXECUTOR] = executor;
+
+    return me
+      .emit(event, key, result)
+      .yield(result);
   }
 
   function _has(keys) {
@@ -49,6 +74,8 @@ define([
 
   function State() {
   }
+
+  State.prototype = new Emitter();
 
   State.prototype.push = function () {
     var me = this;
@@ -66,17 +93,17 @@ define([
 
     switch (OBJECT_TOSTRING.call(key)) {
       case TOSTRING_ARRAY:
-        result = key.map(function (_key) {
-          return _get.call(me, _key.split(SEPARATOR));
+        result = when.map(key, function (_key) {
+          return _get.call(me, _key, _key.split(SEPARATOR));
         });
         break;
 
       default:
-        result = _get.call(me, key.split(SEPARATOR));
+        result = _get.call(me, key, key.split(SEPARATOR));
         break;
     }
 
-    return when(result);
+    return result;
   };
 
   State.prototype.put = function (key, value) {
@@ -86,16 +113,16 @@ define([
     switch(OBJECT_TOSTRING.call(key)) {
       case TOSTRING_OBJECT:
         result = when_keys(key, function (_value, _key) {
-          return _put.call(me, _key.split(SEPARATOR), _value);
+          return _put.call(me, _key, _key.split(SEPARATOR), _value);
         });
         break;
 
       default:
-        result = _put.call(me, key.split(SEPARATOR), value);
+        result = _put.call(me, key, key.split(SEPARATOR), value);
         break;
     }
 
-    return when(result);
+    return result;
   };
 
   State.prototype.has = function (key) {
