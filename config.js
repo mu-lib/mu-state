@@ -4,6 +4,7 @@ define([
 ], function (config, merge) {
   return merge.call({}, config, {
     "get": "get",
-    "put": "put"
+    "put": "put",
+    "ready": "ready"
   });
 });
