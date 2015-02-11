@@ -91,10 +91,14 @@ define([
           me.on(READY, result = arg);
           break;
 
-        default:
+        case TOSTRING_OBJECT:
           result = when_keys.map(arg, function (value, key) {
             return me.put(key, value);
           });
+          break;
+
+        default:
+          throw new Error("Only object/function can be pushed");
       }
 
       return result;
