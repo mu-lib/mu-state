@@ -46,26 +46,27 @@ define([
 
   function _put(key, value) {
     var me = this;
-    var event = {};
     var segments = key.split(SEPARATOR);
-
     var last = segments[LENGTH] - 1;
-    var result = segments.reduce(function (node, segment, index) {
+
+    return when(segments.reduce(function (node, segment, index) {
       return index === last
         ? node
         : node.hasOwnProperty(segment)
           ? node[segment]
           : node[segment] = {};
-    }, me)[segments[last]] = OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION
-      ? value.call(me, key)
-      : value;
+    }, me), function (node) {
+      return when(OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION ? value.call(me, key) : value, function (_value) {
+        return node[segments[last]] = _value;
+      });
+    })
+      .tap(function (_value) {
+        var event = {};
+        event[TYPE] = PUT;
+        event[EXECUTOR] = executor;
 
-    event[TYPE] = PUT;
-    event[EXECUTOR] = executor;
-
-    return me
-      .emit(event, key, result)
-      .yield(result);
+        return me.emit(event, key, _value);
+      });
   }
 
   function _has(key) {
