@@ -64,7 +64,6 @@ define([
         var event = {};
         event[TYPE] = PUT;
         event[EXECUTOR] = executor;
-
         return me.emit(event, key, _value);
       });
   }
@@ -76,8 +75,8 @@ define([
           return node === EMPTY
             ? node
             : node.hasOwnProperty(segment)
-            ? node[segment]
-            : EMPTY;
+              ? node[segment]
+              : EMPTY;
         }, this) !== EMPTY;
   }
 
