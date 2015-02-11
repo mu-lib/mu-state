@@ -129,5 +129,13 @@ define([
     return _has.call(this, key.split(SEPARATOR));
   };
 
+  State.prototype.putIfNotHas = function (key, value) {
+    var me = this;
+
+    return !me.has(key)
+      ? me.put(key, value)
+      : when.resolve();
+  };
+
   return State;
 });
