@@ -5,7 +5,6 @@
   "moduleType": [
     "amd"
   ],
-  "private": true,
   "ignore": [
     "**/.*",
     "bower_components",
