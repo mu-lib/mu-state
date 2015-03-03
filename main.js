@@ -48,7 +48,7 @@ define([
       .then(function (_value) {
         return _value !== EMPTY
           ? _value
-          : OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION ? value.call(me, key) : value;
+          : when(OBJECT_TOSTRING.call(value) === TOSTRING_FUNCTION ? value.call(me, key) : value);
       });
   }
 
