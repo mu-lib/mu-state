@@ -79,6 +79,57 @@ define([ "../main" ], function (CS) {
           .then(function (result) {
             assert.equals(result, UNDEFINED);
           });
+      },
+
+      "with default value": {
+        "hit and string key": function () {
+          return this.cs
+            .get("xxx", "yyy")
+            .then(function (result) {
+              assert.equals(result, "yyy");
+            });
+        },
+
+        "miss and string key": function () {
+          return this.cs
+            .get("key1", "yyy")
+            .then(function (result) {
+              assert.equals(result, {
+                "key2": {
+                  "key3": "value3"
+                }
+              });
+            });
+        },
+
+        "and object key": function () {
+          return this.cs
+            .get({
+              "key1": "zzz",
+              "xxx": "yyy"
+            })
+            .then(function (results) {
+              assert.equals(results.key1, {
+                "key2": {
+                  "key3": "value3"
+                }
+              });
+              assert.equals(results.xxx, "yyy");
+            });
+        },
+
+        "and array key": function () {
+          return this.cs
+            .get([ "key1", "xxx" ], "yyy")
+            .spread(function (value1, value2) {
+              assert.equals(value1, {
+                "key2": {
+                  "key3": "value3"
+                }
+              });
+              assert.equals(value2, "yyy");
+            });
+        }
       }
     },
 

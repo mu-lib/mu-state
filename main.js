@@ -7,7 +7,8 @@ define([
   "poly/array",
   "poly/object"
 ], function (Emitter, config, executor, when, when_keys) {
-  var UNDEFINED;
+  "use strict";
+
   var EMPTY = {};
   var ARRAY_PROTO = Array.prototype;
   var ARRAY_SLICE = ARRAY_PROTO.slice;
@@ -24,7 +25,7 @@ define([
   var TYPE = config.type;
   var EXECUTOR = config.executor;
 
-  function _get(key) {
+  function _get(key, value) {
     var me = this;
     var event = {};
 
@@ -32,15 +33,22 @@ define([
     event[EXECUTOR] = executor;
 
     return me
-      .emit(event, key)
+      .emit(event, key, value)
       .then(function () {
         return key
           .split(SEPARATOR)
           .reduce(function (node, segment) {
-            return node === UNDEFINED
+            return node === EMPTY
               ? node
-              : node[segment];
+              : node.hasOwnProperty(segment)
+                ? node[segment]
+                : EMPTY;
           }, me);
+      })
+      .then(function (_value) {
+        return _value !== EMPTY
+          ? _value
+          : value
       });
   }
 
@@ -118,19 +126,25 @@ define([
 
   State.prototype.push = push;
 
-  State.prototype.get = function (key) {
+  State.prototype.get = function (key, value) {
     var me = this;
     var result;
 
     switch (OBJECT_TOSTRING.call(key)) {
       case TOSTRING_ARRAY:
-        result = when.map(key, function (_key) {
-          return _get.call(me, _key);
+        result =  when.map(key, function (_key) {
+          return _get.call(me, _key, value);
+        });
+        break;
+
+      case TOSTRING_OBJECT:
+        result = when_keys.map(key, function (_value, _key) {
+          return _get.call(me, _key, _value);
         });
         break;
 
       default:
-        result = _get.call(me, key);
+        result = _get.call(me, key, value);
         break;
     }
 
