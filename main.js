@@ -165,7 +165,7 @@ define([
 
     return !me.has(key)
       ? me.put(key, value)
-      : when.resolve();
+      : me.get(key);
   };
 
   return State;
