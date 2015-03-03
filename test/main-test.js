@@ -90,6 +90,16 @@ define([ "../main" ], function (CS) {
             });
         },
 
+        "hit and function value": function () {
+          return this.cs
+            .get("xxx", function (_key) {
+              return _key + "-yyy";
+            })
+            .then(function (result) {
+              assert.equals(result, "xxx-yyy");
+            });
+        },
+
         "miss and string key": function () {
           return this.cs
             .get("key1", "yyy")
