@@ -17,117 +17,123 @@ define([ "../main" ], function (CS) {
         });
     },
 
-    "has shallow key": function () {
-      assert(this.cs.has("key1"));
+    "has": {
+      "shallow key": function () {
+        assert(this.cs.has("key1"));
+      },
+
+      "not shallow key": function () {
+        refute(this.cs.has("xxx"));
+      },
+
+      "deep key": function () {
+        assert(this.cs.has("key1.key2"));
+      },
+
+      "not deep key": function () {
+        refute(this.cs.has("key1.xxx"));
+      }
     },
 
-    "has deep key": function () {
-      assert(this.cs.has("key1.key2"));
-    },
+    "get": {
+      "shallow key": function () {
+        return this.cs
+          .get("key1")
+          .then(function (result) {
+            assert.equals(result, {
+              "key2": {
+                "key3": "value3"
+              }
+            });
+          });
+      },
 
-    "does not have shallow key": function () {
-      refute(this.cs.has("xxx"));
-    },
-
-    "does not have deep key": function () {
-      refute(this.cs.has("key1.xxx"));
-    },
-
-    "get shallow key": function () {
-      return this.cs
-        .get("key1")
-        .then(function (result) {
-          assert.equals(result, {
-            "key2": {
+      "deep key": function () {
+        return this.cs
+          .get("key1.key2")
+          .then(function (result) {
+            assert.equals(result, {
               "key3": "value3"
-            }
+            });
           });
-        });
-    },
+      },
 
-    "get deep key": function () {
-      return this.cs
-        .get("key1.key2")
-        .then(function (result) {
-          assert.equals(result, {
-            "key3": "value3"
-          });
-        });
-    },
-
-    "get using array": function () {
-      return this.cs
-        .get(["key1", "key1.key2" ])
-        .spread(function (value1, value2) {
-          assert.equals(value1, {
-            "key2": {
+      "using array": function () {
+        return this.cs
+          .get(["key1", "key1.key2" ])
+          .spread(function (value1, value2) {
+            assert.equals(value1, {
+              "key2": {
+                "key3": "value3"
+              }
+            });
+            assert.equals(value2, {
               "key3": "value3"
-            }
+            });
+          })
+      },
+
+      "non-existent deep level key": function () {
+        return this.cs
+          .get("key1.key2.a.b.c")
+          .then(function (result) {
+            assert.equals(result, UNDEFINED);
           });
-          assert.equals(value2, {
-            "key3": "value3"
-          });
-        })
+      }
     },
 
-    "get non existent deep level key": function () {
-      return this.cs
-        .get("key1.key2.a.b.c")
-        .then(function (result) {
-          assert.equals(result, UNDEFINED);
-        });
-    },
+    "put": {
+      "shallow key and value": function () {
+        var cs = this.cs;
 
-    "put and get shallow key and value": function () {
-      var cs = this.cs;
+        return cs
+          .put("put_get_shallow", "value")
+          .then(function (put_result) {
+            assert.equals(put_result, "value");
 
-      return cs
-        .put("put_get_shallow", "value")
-        .then(function (put_result) {
-          assert.equals(put_result, "value");
+            return cs
+              .get("put_get_shallow")
+              .then(function (get_result) {
+                assert.equals(get_result, "value");
+              });
+          });
+      },
 
-          return cs
-            .get("put_get_shallow")
-            .then(function (get_result) {
+      "deep key and value": function () {
+        var cs = this.cs;
+
+        return cs
+          .put("put_get_deep.key", "value")
+          .then(function (put_result) {
+            assert.equals(put_result, "value");
+
+            return cs.get("put_get_deep.key", function (get_result) {
               assert.equals(get_result, "value");
             });
-        });
-    },
-
-    "put and get deep key and value": function () {
-      var cs = this.cs;
-
-      return cs
-        .put("put_get_deep.key", "value")
-        .then(function (put_result) {
-          assert.equals(put_result, "value");
-
-          return cs.get("put_get_deep.key", function (get_result) {
-            assert.equals(get_result, "value");
           });
-        });
+      },
+
+      "async key and value": function () {
+        var cs = this.cs;
+
+        return cs
+          .put("put_get_async", function (key) {
+            assert.equals(key, "put_get_async");
+            return "value";
+          })
+          .then(function (put_result) {
+            assert.equals(put_result, "value");
+
+            return cs
+              .get("put_get_async")
+              .then(function (get_result) {
+                assert(get_result, "value");
+              });
+          });
+      }
     },
 
-    "put and get async key and value": function () {
-      var cs = this.cs;
-
-      return cs
-        .put("put_get_async", function (key) {
-          assert.equals(key, "put_get_async");
-          return "value";
-        })
-        .then(function (put_result) {
-          assert.equals(put_result, "value");
-
-          return cs
-            .get("put_get_async")
-            .then(function (get_result) {
-              assert(get_result, "value");
-            });
-        });
-    },
-
-    "push and get": function () {
+    "push": function () {
       var cs = this.cs;
 
       return cs
