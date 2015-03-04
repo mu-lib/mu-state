@@ -233,34 +233,6 @@ define([ "../main" ], function (CS) {
               assert.same(get_result, UNDEFINED);
             });
         });
-    },
-
-    "putIfNotHas": {
-      "with existing value should return existing value" : function () {
-        var cs = this.cs;
-        var whatever = "whatever";
-
-        return cs
-          .putIfNotHas("key1", whatever)
-          .then(function (value) {
-            assert.equals(value, {
-              "key2": {
-                "key3": "value3"
-              }
-            });
-          });
-      },
-
-      "with non-existing value should return new value": function () {
-        var cs = this.cs;
-        var whatever = "whatever";
-
-        return cs
-          .putIfNotHas("keyx", "whatever")
-          .then(function (value) {
-            assert.same(value, whatever);
-          });
-      }
     }
   });
 });

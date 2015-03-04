@@ -179,7 +179,7 @@ define([
 
     return !me.has(key)
       ? me.put(key, value)
-      : me.get(key);
+      : when.resolve();
   };
 
   return State;
