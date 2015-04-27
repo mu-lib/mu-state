@@ -1,7 +1,6 @@
 define([
   "./config",
-  "when/when",
-  "poly/array"
+  "when/when"
 ], function (config, when) {
   "use strict";
 
@@ -9,8 +8,7 @@ define([
   var HEAD = config.head;
   var NEXT = config.next;
 
-
-  return function executor(event, handlers, args) {
+  return function (event, handlers, args) {
     var _handlers = [];
     var _handlersCount = 0;
     var handler;
@@ -22,5 +20,5 @@ define([
     return when.map(_handlers, function (_handler) {
       return _handler.handle(args);
     });
-  }
+  };
 });

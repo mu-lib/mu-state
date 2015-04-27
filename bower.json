@@ -12,8 +12,7 @@
   ],
   "dependencies": {
     "when": "^3",
-    "poly": "^0",
-    "mu-emitter": "^0",
+    "mu-emitter": "^1",
     "mu-merge": "^0"
   },
   "devDependencies": {

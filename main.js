@@ -3,9 +3,7 @@ define([
   "./config",
   "./executor",
   "when/when",
-  "when/keys",
-  "poly/array",
-  "poly/object"
+  "when/keys"
 ], function (Emitter, config, executor, when, when_keys) {
   "use strict";
 
